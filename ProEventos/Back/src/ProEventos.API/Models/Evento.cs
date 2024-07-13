@@ -19,6 +19,6 @@ namespace ProEventos.API.Models
 
         public int QtdPessoas { get; set; }
 
-        public string ImagemUrl { get; set; }
+        public  string ImagemUrl { get; set; }
     }
 }
