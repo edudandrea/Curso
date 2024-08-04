@@ -1,57 +1,62 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { EventoService } from '../services/evento.service';
+import { Evento } from '../model/Evento';
+
 
 @Component({
   selector: 'app-eventos',
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.scss']
+
 })
 export class EventosComponent implements OnInit {
 
-  public filteredEventos: any = [];
-  public eventos: any = [];
-  widthImg: number = 50;
-  margin: number = 2;
-  showImg: boolean = true;
-  private _listFilter: string = '';
+  public filteredEventos: Evento[] = [];
+  public eventos: Evento[] = [];
 
-  public get listFilter(){
-    return this._listFilter
+  public widthImg = 50;
+  public margin = 2;
+  public showImg = true;
+  public listedfilter = '';
+
+  public  get listfilter(): string{
+    return this.listedfilter;
   }
 
   public set listFilter(value: string){
-    this._listFilter = value;
+    this.listedfilter = value;
     this.filteredEventos = this.listFilter ? this.filterEventos(this.listFilter) : this.eventos;
 
   }
-  filterEventos(filterBy: string):any{
+  public filterEventos(filterBy: string): Evento[]{
     filterBy = filterBy.toLocaleLowerCase();
     return this.eventos.filter(
-      (evento: any) =>evento.tema.toLocaleLowerCase().indexOf(filterBy) !== -1||
+      (evento: any) => evento.tema.toLocaleLowerCase().indexOf(filterBy) !== -1 ||
       evento.local.toLocaleLowerCase().indexOf(filterBy) !== -1
-    )
+    );
   }
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private eventoService: EventoService) { }
 
-  ngOnInit(): void {
+   public ngOnInit(): void {
     this.getEventos();
   }
 
-  changeImg(){
+   public changeImg(): void{
     this.showImg = !this.showImg;
   }
 
-  public getEventos(): void{
-      this.http.get('https://localhost:7188/api/Evento').subscribe(
-      response =>{
-        this.eventos = response;
+   public getEventos(): void{
+      this.eventoService.getEventos().subscribe(
+        {next: (evento: Evento[]) => {
+        this.eventos = evento;
         this.filteredEventos = this.eventos;
       },
-      error =>console.log(error)
+        error: (error: any) => console.log(error)
 
-    );
+
+        });
 
   }
 
